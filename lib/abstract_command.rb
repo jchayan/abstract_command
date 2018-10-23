@@ -42,7 +42,7 @@ class AbstractCommand
   end
 
   def system
-    system(to_s)
+    Kernel.system(to_s)
   end
 
   def backtick
