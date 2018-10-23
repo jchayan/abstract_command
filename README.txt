@@ -11,6 +11,8 @@ Features:
     * Will automatically generate all the methods for each variable
       that needs to be interpolated in the command.
     * Let's you interact with a command as if it were an object.
+    * You have three methods you should use: backtick, system, and to_s.
+      In case you want to log your commands.
 
 
 
