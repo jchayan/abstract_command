@@ -26,9 +26,13 @@ class AbstractCommand
     result
   end
 
-  def initialize
+  def initialize(properties = {})
     variables.each do |variable|
       self.class.send(:attr_accessor, variable.to_sym)
+    end
+    properties.each do |key, value|
+      setter = (key.to_s + '=').to_sym
+      send(setter, value)
     end
   end
 
