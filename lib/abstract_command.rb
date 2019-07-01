@@ -1,3 +1,5 @@
+require 'shellwords'
+
 # Shell Command Abstraction.
 #
 # Hides away all the details to generate a command.
@@ -9,7 +11,10 @@
 # 1. Stadardization.
 # 2. Simplicity of code.
 # 3. Reduces smells in methods that interpolate values.
+# 4. Provides an elegant way to interact shell objects.
+# 5. Secure ensures that shell commands are executed safely.
 class AbstractCommand
+
   # '%<name>s'.scan(/(%<)(\w+)(>)/)
   # => [["%<", "name", ">"]]
   VARIABLE_REGEX = /(%<)(\w+)(>)/
@@ -40,7 +45,7 @@ class AbstractCommand
     bindings = {}
     variables.each do |variable|
       value = instance_variable_get("@#{variable}")
-      bindings[variable.to_sym] = value
+      bindings[variable.to_sym] = "#{value}".shellescape
     end
     format(template % bindings)
   end
@@ -52,4 +57,5 @@ class AbstractCommand
   def backtick
     `#{to_s}`
   end
+
 end
