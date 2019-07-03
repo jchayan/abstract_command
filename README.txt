@@ -1,30 +1,30 @@
 
-# abstract_command
+# Abstract Command
+
 
 Shell Command Abstraction - Let's you interact with shell commands as if they were objects.
 
 
-Features:
+Ideas behind:
 
 
-    * Let's you define a shell command with ease.
-    * Will automatically generate all the methods for each variable
-      that needs to be interpolated in the command.
-    * Let's you interact with a command as if it were an object.
-    * You have three methods you should use: backtick, system, and to_s.
-      In case you want to log your commands.
-
-
-
-
-
+* Enforces standardization.
+* Enforces separation of command definition and consumption.
+* Enforces configuration over code.
+* Enforces configuration over refactoring.
+* Enforces simple shell command definition.
+* Provides a simple Object Oriented Interface.
+* Provides a scope for variables that belong to the command.
+* Provides getters and setter for every interpolation in command.
+* Provides a neat interface that plugs to data structures transparently.
+* Avoids methods with many arguments.
+* Avoids changes in the standared libarary: system, backtick, etc.
 
 
 
 Hello world example:
 --------------------------------------------------------------------------------
-1540262628 ~/dev/git/abstract_command $ cat example.rb
-
+```ruby
 require 'abstract_command'
 
 # Hello World Example.
@@ -38,13 +38,12 @@ command = HelloCommand.new
 command.name = 'World.'
 
 puts command.to_s
+```
 
-1540262630 ~/dev/git/abstract_command $ irb
-ruby 2.1.10:001 > eval File.read 'example.rb'
+```bash
+$ ruby example.rb
 echo Hello World.
- => nil
-ruby 2.1.10:002 >
-1540262655 ~/dev/git/abstract_command $
+```
 --------------------------------------------------------------------------------
 
 
@@ -54,10 +53,9 @@ ruby 2.1.10:002 >
 
 
 
-Variable interpolation example:
+Dynamic variables in command:
 --------------------------------------------------------------------------------
-1540264094 ~/dev/git/abstract_command $ vim variables.rb
-1540264107 ~/dev/git/abstract_command $ cat variables.rb
+```ruby
 require 'abstract_command'
 
 class VarsCommand < AbstractCommand
@@ -74,13 +72,13 @@ command.var_4 = 'four'
 command.var_5 = 'five'
 puts command.to_s
 puts command.system
-1540264111 ~/dev/git/abstract_command $ irb
-ruby 2.1.10:001 > eval File.read 'variables.rb'
+```
+
+```bash
+$ ruby variables.rb
 echo one two three four five
 one two three four five
-true
- => nil
-ruby 2.1.10:002 >
+```
 --------------------------------------------------------------------------------
 
 
@@ -92,8 +90,7 @@ ruby 2.1.10:002 >
 
 Namespace suggestion:
 --------------------------------------------------------------------------------
-1540263711 ~/dev/git/abstract_command $ vim lib/abstract_command.rb
-1540263718 ~/dev/git/abstract_command $ cat namespace_suggestion.rb
+```ruby
 require 'abstract_command'
 
 module Command
@@ -117,14 +114,15 @@ command.name = 'world'
 puts command.to_s
 puts command.system
 puts command.backtick
-1540263724 ~/dev/git/abstract_command $ irb
-ruby 2.1.10:001 > eval File.read 'namespace_suggestion.rb'
+```
+
+```bash
+$ ruby namespace_suggestion.rb
 echo Hello world
 Hello world
 true
 Hello world
- => nil
-ruby 2.1.10:002 >
+```
 --------------------------------------------------------------------------------
 
 
@@ -136,8 +134,7 @@ ruby 2.1.10:002 >
 
 Fast initialization:
 --------------------------------------------------------------------------------
-1562171137 ~/dev/git/abstract_command $ vim constructor.rb
-1562171265 ~/dev/git/abstract_command $ cat constructor.rb
+```ruby
 require 'abstract_command'
 
 module Command
@@ -151,13 +148,14 @@ end
 command = Command::Hello.new(:name => 'Kazu')
 puts command.to_s
 puts command.system
-1562171272 ~/dev/git/abstract_command $ irb
-ruby 2.1.10:001 > eval File.read 'constructor.rb'
+```
+
+```bash
+$ ruby constructor.rb
 echo Hello Kazu
 Hello Kazu
 true
- => nil
-ruby 2.1.10:002 >
+```
 --------------------------------------------------------------------------------
 
 
@@ -169,6 +167,7 @@ ruby 2.1.10:002 >
 
 Automatic Sanitization:
 --------------------------------------------------------------------------------
+```ruby
 require 'abstract_command'
 
 module Command
@@ -182,13 +181,14 @@ end
 command = Command::Hello.new(:name => '; touch /tmp/x')
 puts command.to_s
 puts command.system
-1562171466 ~/dev/git/abstract_command $ irb
-ruby 2.1.10:001 > eval File.read 'sanitization.rb'
+```
+
+```bash
+$ ruby sanitization.rb
 echo Hello \;\ touch\ /tmp/x
 Hello ; touch /tmp/x
 true
- => nil
-ruby 2.1.10:002 >
+```
 --------------------------------------------------------------------------------
 
 
@@ -198,25 +198,6 @@ ruby 2.1.10:002 >
 
 
 
-Ideas behind:
 
+I hope it is useful to you :)
 
-    * Simplifies shell command composition.
-    * Avoids methods with many arguments.
-    * It's simple to add new commands.
-    * Confiure instead of Coding.
-    * Confiure instead of Refactor.
-    * Opens the door for standardization.
-    * Devs could create a namespace for commands.
-    * Removes pollution and resposibilities that don't belong other code
-      does not need to know about how the shell command has to be built.
-    * Among other things..
-
-
-
-
-
-
-
-
-Enjoy.
