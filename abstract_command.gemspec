@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'abstract_command'
-  s.version     = '0.0.3'
+  s.version     = '0.0.4'
   s.date        = '2018-10-22'
   s.summary     = "Shell Command Abstraction"
   s.description = "An Abstraction that lets you interact with commands as if they were objects"

@@ -51,7 +51,7 @@ class AbstractCommand
   end
 
   def system
-    Kernel.system(to_s)
+    super(to_s)
   end
 
   def backtick
