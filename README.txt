@@ -134,6 +134,70 @@ ruby 2.1.10:002 >
 
 
 
+Fast initialization:
+--------------------------------------------------------------------------------
+1562171137 ~/dev/git/abstract_command $ vim constructor.rb
+1562171265 ~/dev/git/abstract_command $ cat constructor.rb
+require 'abstract_command'
+
+module Command
+  class Hello < AbstractCommand
+    def template
+      'echo Hello %<name>s'
+    end
+  end
+end
+
+command = Command::Hello.new(:name => 'Kazu')
+puts command.to_s
+puts command.system
+1562171272 ~/dev/git/abstract_command $ irb
+ruby 2.1.10:001 > eval File.read 'constructor.rb'
+echo Hello Kazu
+Hello Kazu
+true
+ => nil
+ruby 2.1.10:002 >
+--------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+Automatic Sanitization:
+--------------------------------------------------------------------------------
+require 'abstract_command'
+
+module Command
+  class Hello < AbstractCommand
+    def template
+      'echo Hello %<name>s'
+    end
+  end
+end
+
+command = Command::Hello.new(:name => '; touch /tmp/x')
+puts command.to_s
+puts command.system
+1562171466 ~/dev/git/abstract_command $ irb
+ruby 2.1.10:001 > eval File.read 'sanitization.rb'
+echo Hello \;\ touch\ /tmp/x
+Hello ; touch /tmp/x
+true
+ => nil
+ruby 2.1.10:002 >
+--------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 Ideas behind:
 
 
