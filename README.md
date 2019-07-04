@@ -12,7 +12,8 @@ Ideas behind:
 * Enforces separation of command definition and consumption.
 * Enforces configuration over code.
 * Enforces configuration over refactoring.
-* Enforces simple shell command definition.
+* Enforces simple shell-command definition.
+* Enforces automatic sanitization of variables that get interpolated.
 * Provides a simple Object Oriented Interface.
 * Provides a scope for variables that belong to the command.
 * Provides getters and setter for every interpolation in command.
@@ -241,4 +242,5 @@ Hello Sergio
 
 
 I hope it is useful to you :)
+
 
