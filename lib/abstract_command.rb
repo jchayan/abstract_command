@@ -1,3 +1,4 @@
+require 'open3'
 require 'shellwords'
 
 # Shell Command Abstraction.
@@ -56,6 +57,20 @@ class AbstractCommand
 
   def backtick
     `#{to_s}`
+  end
+
+  def execute
+    begin
+      stdout, stderr, status = Open3.capture3(to_s)
+      status = status.exitstatus
+    rescue StandardError => error
+      stdout = ""
+      if(error.message)
+        stderr = error.message
+      end
+      status = 1
+    end
+    return stdout, stderr, status
   end
 
 end
