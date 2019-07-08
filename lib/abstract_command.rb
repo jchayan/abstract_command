@@ -48,7 +48,7 @@ class AbstractCommand
       value = instance_variable_get("@#{variable}")
       bindings[variable.to_sym] = "#{value}".shellescape
     end
-    format(template % bindings)
+    format(template, bindings)
   end
 
   def system
