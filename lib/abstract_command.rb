@@ -4,16 +4,24 @@ require 'shellwords'
 # Shell Command Abstraction.
 #
 # Hides away all the details to generate a command.
-# And privides an easy interface to interact with shell commands as if
+# And provides an easy interface to interact with shell commands as if
 # they were objects.
 #
 # This is good for the following reasons:
 #
-# 1. Stadardization.
-# 2. Simplicity of code.
-# 3. Reduces smells in methods that interpolate values.
-# 4. Provides an elegant way to interact shell objects.
-# 5. Secure ensures that shell commands are executed safely.
+# - Enforces standardization.
+# - Enforces separation of command definition and consumption.
+# - Enforces configuration over code.
+# - Enforces configuration over refactoring.
+# - Enforces simple shell-command definition.
+# - Enforces automatic sanitization of variables that get interpolated.
+# - Provides a simple Object Oriented Interface.
+# - Provides a scope for variables that belong to the command.
+# - Provides getters and setter for every interpolation in command.
+# - Provides a neat interface that plugs to data structures transparently.
+# - Avoids methods with many arguments.
+# - Avoids changes in the standared libarary: system, backtick, etc.
+#
 class AbstractCommand
 
   # '%<name>s'.scan(/(%<)(\w+)(>)/)
