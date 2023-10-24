@@ -23,6 +23,8 @@ require 'shellwords'
 # - Avoids changes in the standared libarary: system, backtick, etc.
 #
 class AbstractCommand
+  attr_accessor :req_vars
+  attr_accessor :opt_vars
 
   # '%<name>s'.scan(/(%<)(\w+)(>)/)
   # => [["%<", "name", ">"]]
@@ -32,29 +34,28 @@ class AbstractCommand
     raise 'must implement'
   end
 
-  def variables
-    result = []
-    template.scan(VARIABLE_REGEX).each do |variable|
-      result.push(variable[1])
-    end
-    result
+  def setget(variable, value)
+    singleton_class.class_eval { attr_accessor variable.to_sym }
+    instance_variable_set("@#{variable}", value.shellescape)
   end
 
-  def initialize(properties = {})
-    variables.each do |variable|
-      self.class.send(:attr_accessor, variable.to_sym)
-    end
-    properties.each do |key, value|
-      setter = (key.to_s + '=').to_sym
-      send(setter, value)
-    end
+  def initialize(properties)
+    @req_vars = properties[:required]
+    @opt_vars = properties[:optional]
+
+    req_vars.each { |variable, value| setget(variable, value) }
+    opt_vars.each { |variable, value| setget(variable, value) }
+  end
+
+  def variables
+    req_vars.keys + opt_vars.keys
   end
 
   def to_s
     bindings = {}
     variables.each do |variable|
       value = instance_variable_get("@#{variable}")
-      bindings[variable.to_sym] = "#{value}".shellescape
+      bindings[variable.to_sym] = "#{value}"
     end
     format(template, bindings)
   end
