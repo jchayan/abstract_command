@@ -21,41 +21,70 @@ require 'shellwords'
 # - Provides a neat interface that plugs to data structures transparently.
 # - Avoids methods with many arguments.
 # - Avoids changes in the standared libarary: system, backtick, etc.
-#
-class AbstractCommand
-  attr_accessor :req_vars
-  attr_accessor :opt_vars
 
-  # '%<name>s'.scan(/(%<)(\w+)(>)/)
-  # => [["%<", "name", ">"]]
-  VARIABLE_REGEX = /(%<)(\w+)(>)/
+class CommandArgument
+  attr_accessor :name
+  attr_accessor :value
+
+  def initialize(name, value)
+    @name  = name
+    @value = value
+  end
+end
+
+class AbstractCommand
+  private
+
+  # We would only allow changing the value of an argument.
+  #
+  # This method defines a setter/getter for an argument, making
+  # this library fulfill its promise of abstracting commands as objects:
+  # all the instance variables of a command are CommandArguments
+
+  def create_accessor_mutator(argument)
+    singleton_class.send(:define_method, "#{argument.name}") do
+      command_arg = instance_variable_get("@#{argument.name}")
+      command_arg.value
+    end
+
+    singleton_class.send(:define_method, "#{argument.name}=") do |value|
+      command_arg = self.instance_variable_get("@#{argument.name}")
+      command_arg.value = value
+    end
+
+    instance_variable_set("@#{argument.name}", argument)
+  end
+
+  def create_command_arg(property, value)
+    CommandArgument.new(property, value)
+  end
+
+  public
 
   def template
     raise 'must implement'
   end
 
-  def setget(variable, value)
-    singleton_class.class_eval { attr_accessor variable.to_sym }
-    instance_variable_set("@#{variable}", value.shellescape)
+  def initialize(properties = {})
+    properties
+      .map(&method(:create_command_arg))
+      .each(&method(:create_accessor_mutator))
   end
 
-  def initialize(properties)
-    @req_vars = properties[:required]
-    @opt_vars = properties[:optional]
+  # Command arguments can be retrieved to build the command's template
+  # in the way that the user of this library finds more convenient
 
-    req_vars.each { |variable, value| setget(variable, value) }
-    opt_vars.each { |variable, value| setget(variable, value) }
+  def command_arguments
+    instance_variables.map(&method(:instance_variable_get))
   end
 
-  def variables
-    req_vars.keys + opt_vars.keys
-  end
+  # Shell sanitization is still ensured as in the original implementation
+  # So that the command is cleaned up even if the arguments values change
 
   def to_s
     bindings = {}
-    variables.each do |variable|
-      value = instance_variable_get("@#{variable}")
-      bindings[variable.to_sym] = "#{value}"
+    command_arguments.each do |argument|
+      bindings[argument.name.to_sym] = "#{argument.value.shellescape}"
     end
     format(template, bindings)
   end
